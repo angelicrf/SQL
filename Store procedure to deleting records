@@ -1,0 +1,20 @@
+create procedure uspDeleteOrder
+@OrderQuanity smallint
+as begin
+DELETE [NorthWestDining].[dbo].[RecipeOrder]
+where OrderID =1001
+ end 
+ go
+
+ exec uspDeleteOrder @OrderQuanity =35
+ --test it
+ select * from [dbo].[RecipeOrder]
+ --or by calling it
+ DECLARE @Ret int 
+  EXEC  @Ret = uspDeleteOrder 35
+   If @ret = 0   print 'error!'
+   else  
+   print 'OrderId entered: ' + cast(@ret as varchar); 
+   go
+   --test it
+   select * from [dbo].[RecipeOrder]
