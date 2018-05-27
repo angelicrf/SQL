@@ -1,1 +1,39 @@
 
+use [Northwind]
+go
+
+--Creating the stored procedure using the model provided to update one order in a table
+
+Create Procedure uspdatedOrder
+	@CustomerID nchar(5),
+	@EmployeeID [int],
+	@ShipVia int = 1, 
+	@OrderID int =10432
+as
+begin
+	if not exists (select 1 from Customers where customerid = @Customerid)
+		throw 50001, 'Invalid Customer Provided', 1;
+	if not exists (select 1 from Employees where Employeeid = @EmployeeID)
+		throw 50002, 'Invalid Employee Provided', 1;
+	if not exists (select 1 from Shippers where ShipperId = @ShipVia)
+		throw 50003, 'Invalid Shipper Provided', 1;	
+	UPDATE [dbo].[Orders]
+   SET [CustomerID] = 'SPLIR'
+      ,[EmployeeID] = 3
+      ,[OrderDate] = '02/15/2014'
+      ,[RequiredDate] = '02/16/2014'
+      ,[ShippedDate] = '02/22/2014'
+      ,[ShipVia] = 3
+      ,[Freight] = 54.25
+      ,[ShipName] = 'Cafe du palee'
+      ,[ShipAddress] = '56th Ave North'
+      ,[ShipCity] = 'Marseille'
+      ,[ShipRegion] = Null
+      ,[ShipPostalCode] = 13010 
+      ,[ShipCountry] = 'France'
+ WHERE [OrderID]=@OrderID
+ return @@Identity
+ end
+ go
+ drop Procedure uspdatedOrder
+ go
