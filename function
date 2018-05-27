@@ -1,0 +1,31 @@
+use Northwind
+go
+--We can use the if,else statement to make sure if the function is already exist if it's not exist then create it
+
+CREATE FUNCTION fnYearMonth
+(@pramYearMonth date) 
+RETURNS varchar(10)
+ AS 
+ BEGIN 
+  RETURN convert(varchar(4),YEAR(@pramYearMonth)) + '-' + convert(varchar(3),left(DATENAME (MONTH , @pramYearMonth),3)) 
+  END;  
+   go
+drop function fnYearMonthModified 
+ select OrderID, dbo.fnYearMonth([OrderDate]) AS Order_Date  
+ from [dbo].[Orders]
+ --Another way to create this function
+ go
+ Create function fnYearMonthTwo 
+	(@OrderDate DATETIME) 
+	returns int
+Begin
+	Return (Select OrderID  from [dbo].[Orders] where OrderDate =FORMAT(@OrderDate, 'yyyy-MMM'))
+End;
+go
+drop function fnYearMonthTwo
+--test 1
+select [dbo].[fnYearMonthTwo]('1996-OCT') as Order_Date
+--test 2:
+select [dbo].[fnYearMonthTwo]('2013-JAN') as Order_Date
+-- test 3
+select [dbo].[fnYearMonthTwo]('1997-DEC') as Order_Date
