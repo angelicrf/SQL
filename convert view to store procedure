@@ -1,0 +1,31 @@
+use Northwind
+go
+Create Function fnSalesbyCategory
+	(@CategoryName nvarchar(40))
+	Returns Table
+Return (
+	Select  p.ProductID,c.CategoryName, p.ProductName, sum(od.[ExtendedPrice]) as TotalDue
+	from Products p join [dbo].[Order Details Extended] od 
+	on od.ProductID  = p.ProductID
+	join [dbo].[Orders]o
+	on o.OrderID = od.OrderID
+	join  [dbo].[Categories]c
+	on c.CategoryID = p.CategoryID
+
+	where @CategoryName = c.CategoryName
+	and o.OrderDate between '19970101' and '19971231'
+	Group by p.ProductName, p.ProductID,c.CategoryName
+)
+drop function fnSalesbyCategory
+--12 rows apears once I called the function usiing the parameter 'Seafood'
+Select * from dbo.fnSalesbyCategory('Seafood');
+SELECT 
+ distinct p.ProductID,sc.ProductName,sc.[CategoryName]
+ FROM [dbo].[Products] p,
+  dbo.fnSalesbyCategory('Seafood') as sc
+-- select 2 other statements to call this function
+
+SELECT *FROM dbo.fnSalesbyCategory('Beverages')
+order by [ProductID]
+SELECT *FROM dbo.fnSalesbyCategory('Dairy Products')
+order by [ProductName]
