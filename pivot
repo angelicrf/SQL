@@ -1,0 +1,26 @@
+declare @TempEmp_orders as table
+(
+     --orderID int,
+	 lastName nvarchar(20),
+	 total_Orders int
+	
+	 )
+    insert into @TempEmp_orders ([LastName],total_Orders)
+	--select o.[OrderID],e.[LastName], count(*) TotalOrders
+	--from [dbo].[Employees] e join [dbo].[Orders] o
+	--on e.employeeid = o.employeeid
+	--group by o.[OrderID],e.[LastName]
+		select lastname, count(*) TotalOrders
+	from employees join orders
+	on employees.employeeid = orders.employeeid
+	group by lastname
+
+select * from  @TempEmp_orders
+
+pivot
+(
+sum(total_Orders)
+For lastName in ([Buchanan], [Callahan], [Davolio], [Dodsworth], [Fuller],[King],[Leverling],[Peacock],[Suyama])
+)
+as P
+
