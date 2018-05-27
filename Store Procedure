@@ -2,7 +2,7 @@
 use [Northwind]
 go
 
---Creating the stored procedure using the model provided to update one order in a table
+--Creating the stored procedure to change records in a table
 
 Create Procedure uspdatedOrder
 	@CustomerID nchar(5),
