@@ -1,0 +1,71 @@
+use [NorthWestDining]
+go
+create procedure uspnew_Orders
+	@CustomerID nchar(5),
+	@EmployeeID [int],
+	@ShipVia int = 3, 
+	@OrderID int =10432
+as
+begin
+  
+    DECLARE @TempOrder TABLE
+	 (
+	 CustomerID nchar(5),
+	 EmployeeID [int],	
+     ShipVia int ,
+	 OrderID Int
+
+	 )
+    insert into @TempOrder (CustomerID,EmployeeID,ShipVia,OrderID)
+	--or using the previous stored procedure
+	--EXEC [Northwind].[dbo].[updatedOrder] @CustomerID,@EmployeeID ,@ShipVia , @OrderID 
+	select CustomerID,EmployeeID ,ShipVia , OrderID from [Northwind].[dbo].[Orders]
+	where OrderID=10432
+	
+	select * from @TempOrder
+	end
+   go
+--dropping statement
+   use [NorthWestDining]
+   drop procedure uspnew_Orders
+   go
+
+--calling the store procedure created
+use [NorthWestDining]
+exec uspnew_Orders  @CustomerID ='SPLIR',@EmployeeID =3,@ShipVia =3, @OrderID =10432
+
+--retriving data from temp table
+Declare @retreiveData int
+EXEC  @retreiveData = uspnew_Orders 'SPLIR', 3, 3,10432;
+If @retreiveData= 0 
+	print 'error!';
+else 
+	print 'OrderId entered: ' + cast(@retreiveData as varchar);
+
+--Well here is another way to just add a row to my dtatbase's table:
+use NorthWestDining
+go
+--select * from [dbo].[Ingredients]
+CREATE PROCEDURE uspAdd_row
+	@IngredientID int,
+	@IngredientName varchar(40),
+	@RecipeCost money,
+	@RecipeID int
+AS
+BEGIN
+	INSERT INTO [dbo].[Ingredients] (IngredientID,IngredientName,RecipeCost,RecipeID )
+	VALUES  (@IngredientID,@IngredientName,@RecipeCost,@RecipeID)
+END
+
+GO
+EXEC uspAdd_row @IngredientID= 403, @IngredientName ='fish',@RecipeCost=48,@RecipeID =200
+drop procedure uspAdd_row
+select * from [dbo].[Ingredients]
+select *from [dbo].[Recipes]
+--calling it
+Declare @retreiveData int
+EXEC  @retreiveData = uspAdd_row 403,'fish', 48, 200;
+If @retreiveData= 0 
+	print 'error!';
+else 
+	print 'OrderId entered: ' + cast(@retreiveData as varchar);
